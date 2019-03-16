@@ -119,7 +119,7 @@ class Solitaire {
             this.normalDecks[index] = new NormalDeck(this.scene)
             let deck = this.normalDecks[index]
             const mid = singleSpace * (index + 0.5)
-            const left = Math.floor(mid - deck.width() / 2)
+            const left = Math.floor(mid - deck.width / 2)
             deck.move(left, 200)
             for (let cnt = 0; cnt < index + 1; cnt++) {
                 deck.addCard(this.servingDeck.topCard()!)
@@ -134,7 +134,7 @@ class Solitaire {
             this.targetDecks[index] = new TargetDeck(this.scene, suit)
             let deck = this.targetDecks[index]
             const mid = singleSpace * (index + 0.5)
-            const left = Math.floor(Solitaire.Width - mid - deck.width() / 2)
+            const left = Math.floor(Solitaire.Width - mid - deck.width / 2)
             deck.move(left, 50)
         }
     }
