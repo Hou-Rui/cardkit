@@ -60,7 +60,7 @@ class ServingDeck extends cardkit.Deck {
 
 class NormalDeck extends cardkit.Deck {
     acceptCard(card: cardkit.Card) {
-        let topCard = this.topCard()
+        let topCard = this.topCard
         if (topCard === null) {
             return card.point === 13
         }
@@ -78,7 +78,7 @@ class TargetDeck extends cardkit.Deck {
         this.faceUpDelta = this.faceDownDelta = 0
     }
     acceptCard(card: cardkit.Card) {
-        let topCard = this.topCard()
+        let topCard = this.topCard
         if (topCard === null) {
             return card.point === 1 && card.suit === this.suit
         }
@@ -131,9 +131,9 @@ class Solitaire {
             const left = Math.floor(mid - deck.width / 2)
             deck.move(left, 200)
             for (let cnt = 0; cnt < index + 1; cnt++) {
-                deck.addCard(this.servingDeck.topCard()!)
+                deck.addCard(this.servingDeck.topCard!)
             }
-            deck.topCard()!.faceUp = true
+            deck.topCard!.faceUp = true
         }
     }
     private initTargetDecks() {

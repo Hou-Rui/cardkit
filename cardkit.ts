@@ -173,7 +173,7 @@ module cardkit {
                 if (deck === movingCard.deck) {
                     continue
                 }
-                let card = deck.topCard()
+                let card = deck.topCard
                 if (card === null) {
                     if (deck.containsPoint(left, top)) {
                         return deck
@@ -190,7 +190,7 @@ module cardkit {
             card.deck = this
             this.adjustCardPosition()
         }
-        topCard(): Card | null {
+        get topCard(): Card | null {
             if (this.cards.length === 0) {
                 return null
             }
