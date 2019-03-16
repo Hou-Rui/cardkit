@@ -3,8 +3,12 @@
 let game: Solitaire
 
 class GameCard extends cardkit.Card {
-    constructor(deck: cardkit.Deck, suit: cardkit.Suit, point: number,
-        private targets: TargetDeck[]) {
+    constructor(
+        deck: cardkit.Deck,
+        suit: cardkit.Suit,
+        point: number,
+        private targets: TargetDeck[]
+    ) {
         super(deck, suit, point)
     }
     onClick(_event: MouseEvent) {
@@ -28,9 +32,13 @@ class GameCard extends cardkit.Card {
 }
 
 class ServingDeck extends cardkit.Deck {
-     replayCount = 0
-    constructor(scene: HTMLElement, left: number, top: number,
-            private placingDeck: PlacingDeck) {
+    replayCount = 0
+    constructor(
+        scene: HTMLElement,
+        left: number,
+        top: number,
+        private placingDeck: PlacingDeck
+    ) {
         super(scene, left, top)
         this.faceUpDelta = this.faceDownDelta = 0
         placingDeck.move(left + 100, top)
@@ -41,6 +49,7 @@ class ServingDeck extends cardkit.Deck {
     onClick(_event: MouseEvent) {
         this.replayCount++
         for (let card of this.placingDeck.cards) {
+            card.setFaceUp(false)
             this.addCard(card)
         }
     }
@@ -55,13 +64,15 @@ class NormalDeck extends cardkit.Deck {
         if (topCard === null) {
             return card.point === 13
         }
-        return card.point === topCard.point - 1
-            && cardkit.suitConflict(card.suit, topCard.suit)
+        return (
+            card.point === topCard.point - 1 &&
+            cardkit.suitConflict(card.suit, topCard.suit)
+        )
     }
 }
 
 class TargetDeck extends cardkit.Deck {
-     replayCount = 0
+    replayCount = 0
     constructor(scene: HTMLElement, private suit: cardkit.Suit) {
         super(scene)
         this.faceUpDelta = this.faceDownDelta = 0
@@ -69,11 +80,9 @@ class TargetDeck extends cardkit.Deck {
     acceptCard(card: cardkit.Card) {
         let topCard = this.topCard()
         if (topCard === null) {
-            return card.point === 1
-                && card.suit === this.suit
+            return card.point === 1 && card.suit === this.suit
         }
-        return card.point === topCard.point + 1
-            && card.suit === topCard.suit
+        return card.point === topCard.point + 1 && card.suit === topCard.suit
     }
 }
 
@@ -138,7 +147,7 @@ class Solitaire {
             deck.move(left, 50)
         }
     }
-     checkGameOver() {
+    checkGameOver() {
         if (this.targetDecks.every(deck => deck.cards.length === 13)) {
             alert('游戏完成！')
         }
