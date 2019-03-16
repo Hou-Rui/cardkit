@@ -116,7 +116,7 @@ module cardkit {
             this.deltaX = event.clientX - card.left
             this.deltaY = event.clientY - card.top
             card.style.zIndex = `${MovingEventHandler.TopZIndex}`
-            let nextCards = card.next()
+            let nextCards = card.next
             for (let index = 0; index < nextCards.length; index++) {
                 let newZIndex = MovingEventHandler.TopZIndex + index + 1
                 nextCards[index].style.zIndex = `${newZIndex}`
@@ -133,7 +133,7 @@ module cardkit {
                 this.movingCard = null
                 return
             }
-            let nextCards = this.movingCard!.next()
+            let nextCards = this.movingCard!.next
             deck.addCard(this.movingCard!)
             for (let card of nextCards) {
                 deck.addCard(card)
@@ -165,7 +165,7 @@ module cardkit {
                 card.rank = index
                 card.style.zIndex = `${index + 1}`
                 card.move(left, top)
-                top += card.faceUp() ? this.faceUpDelta : this.faceDownDelta
+                top += card.faceUp ? this.faceUpDelta : this.faceDownDelta
             }
         }
         static puttingCardAt(movingCard: Card, left: number, top: number) {
@@ -223,7 +223,7 @@ module cardkit {
             super(deck.scene)
             // 初始化卡牌
             this.name = `${this.suit}${this.point}`
-            this.setFaceUp(false)
+            this.faceUp = false
             deck.addCard(this)
             // 初始化事件
             this.initEvents()
@@ -252,14 +252,14 @@ module cardkit {
             let point = Number(name.slice(1))
             return new this(deck, suit, point)
         }
-        next(): Card[] {
+        get next(): Card[] {
             let cards = this.deck.cards
             return cards.slice(this.rank + 1)
         }
-        faceUp(): boolean {
+        get faceUp(): boolean {
             return this._faceUp
         }
-        setFaceUp(up: boolean) {
+        set faceUp(up: boolean) {
             this._faceUp = up
             if (up) {
                 this.style.backgroundImage = `url("images/${this.name}.bmp")`
@@ -271,7 +271,7 @@ module cardkit {
             let startX = this.left,
                 startY = this.top
             this.move(left, top)
-            let nextCards = this.next()
+            let nextCards = this.next
             for (let card of nextCards) {
                 let deltaX = left - startX,
                     deltaY = top - startY

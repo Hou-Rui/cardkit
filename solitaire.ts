@@ -12,12 +12,12 @@ class GameCard extends cardkit.Card {
         super(deck, suit, point)
     }
     onClick(_event: MouseEvent) {
-        if (!this.faceUp()) {
-            this.setFaceUp(true)
+        if (!this.faceUp) {
+            this.faceUp = true
         }
     }
     movable() {
-        return this.faceUp()
+        return this.faceUp
     }
     onDoubleClick(_event: MouseEvent) {
         for (let deck of this.targets) {
@@ -49,7 +49,7 @@ class ServingDeck extends cardkit.Deck {
     onClick(_event: MouseEvent) {
         this.replayCount++
         for (let card of this.placingDeck.cards) {
-            card.setFaceUp(false)
+            card.faceUp = false
             this.addCard(card)
         }
     }
@@ -133,7 +133,7 @@ class Solitaire {
             for (let cnt = 0; cnt < index + 1; cnt++) {
                 deck.addCard(this.servingDeck.topCard()!)
             }
-            deck.topCard()!.setFaceUp(true)
+            deck.topCard()!.faceUp = true
         }
     }
     private initTargetDecks() {
