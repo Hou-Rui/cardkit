@@ -67,7 +67,7 @@ module cardkit {
         onDoubleClick(event: MouseEvent): void {
             // 重载此方法
         }
-        movable(event: MouseEvent): boolean {
+        movable(): boolean {
             // 重载此方法
             return true
         }
@@ -81,7 +81,7 @@ module cardkit {
         private static readonly TopZIndex = 10000
         private constructor() {
             document.onmousemove = (event) => {
-                if (this.movingCard !== null) {
+                if (this.movingCard !== null && this.movingCard.movable()) {
                     let x = event.clientX - this.deltaX
                     let y = event.clientY - this.deltaY
                     this.movingCard.moveWithNext(x, y)

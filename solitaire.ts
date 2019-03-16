@@ -12,7 +12,7 @@ class GameCard extends cardkit.Card {
             this.setFaceUp(true)
         }
     }
-    movable(_event: MouseEvent) {
+    movable() {
         return this.faceUp()
     }
     onDoubleClick(_event: MouseEvent) {
