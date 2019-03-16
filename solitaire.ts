@@ -28,7 +28,7 @@ class GameCard extends cardkit.Card {
 }
 
 class ServingDeck extends cardkit.Deck {
-    public replayCount = 0
+     replayCount = 0
     constructor(scene: HTMLElement, left: number, top: number,
             private placingDeck: PlacingDeck) {
         super(scene, left, top)
@@ -61,7 +61,7 @@ class NormalDeck extends cardkit.Deck {
 }
 
 class TargetDeck extends cardkit.Deck {
-    public replayCount = 0
+     replayCount = 0
     constructor(scene: HTMLElement, private suit: cardkit.Suit) {
         super(scene)
         this.faceUpDelta = this.faceDownDelta = 0
@@ -138,7 +138,7 @@ class Solitaire {
             deck.move(left, 50)
         }
     }
-    public checkGameOver() {
+     checkGameOver() {
         if (this.targetDecks.every(deck => deck.cards.length === 13)) {
             alert('游戏完成！')
         }

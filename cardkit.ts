@@ -1,5 +1,4 @@
 module cardkit {
-
     export enum Suit {
         Spades = 'S',
         Hearts = 'H',
@@ -8,21 +7,23 @@ module cardkit {
     }
 
     export const SuitFromString: { [key: string]: Suit } = {
-        'S': Suit.Spades,
-        'H': Suit.Hearts,
-        'C': Suit.Clubs,
-        'D': Suit.Diamonds
+        S: Suit.Spades,
+        H: Suit.Hearts,
+        C: Suit.Clubs,
+        D: Suit.Diamonds
     }
 
     export const SuitFromNumber: Suit[] = [
-        Suit.Spades, Suit.Hearts, Suit.Clubs, Suit.Diamonds
+        Suit.Spades,
+        Suit.Hearts,
+        Suit.Clubs,
+        Suit.Diamonds
     ]
 
     export function suitConflict(a: Suit, b: Suit) {
         if (a === Suit.Spades || a === Suit.Clubs) {
             return b === Suit.Hearts || b === Suit.Diamonds
-        }
-        else {
+        } else {
             return b === Suit.Spades || b === Suit.Clubs
         }
     }
@@ -47,8 +48,8 @@ module cardkit {
             }
         }
         protected initEvents() {
-            this.element.onclick = (event) => this.onClick(event)
-            this.element.ondblclick = (event) => this.onDoubleClick(event)
+            this.element.onclick = event => this.onClick(event)
+            this.element.ondblclick = event => this.onDoubleClick(event)
         }
         style() {
             return this.element.style
@@ -66,8 +67,12 @@ module cardkit {
             return Number(this.style().height!.split('px')[0])
         }
         containsPoint(left: number, top: number) {
-            return (left > this.left() && left < this.left() + this.width()
-                && top > this.top() && top < this.top() + this.height())
+            return (
+                left > this.left() &&
+                left < this.left() + this.width() &&
+                top > this.top() &&
+                top < this.top() + this.height()
+            )
         }
         move(left: number, top: number) {
             this.style().left = `${left}px`
@@ -92,7 +97,7 @@ module cardkit {
         private static _instance: MovingEventHandler | null = null
         private static readonly TopZIndex = 10000
         private constructor() {
-            document.onmousemove = (event) => {
+            document.onmousemove = event => {
                 if (this.movingCard !== null && this.movingCard.movable()) {
                     let x = event.clientX - this.deltaX
                     let y = event.clientY - this.deltaY
@@ -102,7 +107,7 @@ module cardkit {
         }
         static instance() {
             if (MovingEventHandler._instance === null) {
-                return MovingEventHandler._instance = new MovingEventHandler()
+                return (MovingEventHandler._instance = new MovingEventHandler())
             }
             return MovingEventHandler._instance
         }
@@ -118,7 +123,11 @@ module cardkit {
             }
         }
         moveEnd(event: MouseEvent) {
-            let deck = Deck.puttingCardAt(this.movingCard!, event.clientX, event.clientY)
+            let deck = Deck.puttingCardAt(
+                this.movingCard!,
+                event.clientX,
+                event.clientY
+            )
             if (deck === null || !deck.acceptCard(this.movingCard!)) {
                 this.movingCard!.deck.adjustCardPosition()
                 this.movingCard = null
@@ -156,7 +165,7 @@ module cardkit {
                 card.rank = index
                 card.style().zIndex = `${index + 1}`
                 card.move(left, top)
-                top += (card.faceUp() ? this.faceUpDelta : this.faceDownDelta)
+                top += card.faceUp() ? this.faceUpDelta : this.faceDownDelta
             }
         }
         static puttingCardAt(movingCard: Card, left: number, top: number) {
@@ -169,8 +178,7 @@ module cardkit {
                     if (deck.containsPoint(left, top)) {
                         return deck
                     }
-                }
-                else if (card.containsPoint(left, top)) {
+                } else if (card.containsPoint(left, top)) {
                     return deck
                 }
             }
@@ -189,10 +197,10 @@ module cardkit {
             return this.cards[this.cards.length - 1]
         }
         removeCard(card: Card) {
-            this.cards = this.cards.filter((x) => x !== card)
+            this.cards = this.cards.filter(x => x !== card)
         }
         shuffle() {
-            this.cards.sort((_x, _y) => Math.random() > 0.5 ? -1 : 1)
+            this.cards.sort((_x, _y) => (Math.random() > 0.5 ? -1 : 1))
             this.adjustCardPosition()
         }
         acceptCard(card: Card): boolean {
@@ -222,19 +230,19 @@ module cardkit {
         }
         protected initEvents() {
             let handler = MovingEventHandler.instance()
-            this.element.onmousedown = (event) => {
+            this.element.onmousedown = event => {
                 handler.moveBegin(event, this)
                 this.onMoveBegin(event)
             }
-            this.element.onmouseup = (event) => {
+            this.element.onmouseup = event => {
                 handler.moveEnd(event)
                 this.onMoveEnd(event)
             }
-            this.element.onclick = (event) => {
+            this.element.onclick = event => {
                 this.onClick(event)
                 this.deck.onCardClick(this, event)
             }
-            this.element.ondblclick = (event) => {
+            this.element.ondblclick = event => {
                 this.onDoubleClick(event)
                 this.deck.onCardDoubleClick(this, event)
             }
@@ -255,17 +263,18 @@ module cardkit {
             this._faceUp = up
             if (up) {
                 this.style().backgroundImage = `url("images/${this.name}.bmp")`
-            }
-            else {
+            } else {
                 this.style().backgroundImage = `url("images/back.bmp")`
             }
         }
         moveWithNext(left: number, top: number) {
-            let startX = this.left(), startY = this.top()
+            let startX = this.left(),
+                startY = this.top()
             this.move(left, top)
             let nextCards = this.next()
             for (let card of nextCards) {
-                let deltaX = left - startX, deltaY = top - startY
+                let deltaX = left - startX,
+                    deltaY = top - startY
                 let newX = card.left() + deltaX
                 let newY = card.top() + deltaY
                 card.move(newX, newY)
@@ -278,5 +287,4 @@ module cardkit {
             // 重载此方法
         }
     }
-
 }
