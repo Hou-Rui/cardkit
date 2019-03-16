@@ -31,12 +31,24 @@ module cardkit {
         public element = document.createElement('div')
 
         constructor(public scene: HTMLElement) {
+            this.initStyle()
+            this.initEvents()
+            scene.style.zIndex = '-1'
+            scene.appendChild(this.element)
+        }
+        protected initStyle(left?: number, top?: number) {
             this.style().position = 'absolute'
             this.style().width = '71px'
             this.style().height = '96px'
             this.style().borderRadius = '4px'
-            scene.style.zIndex = '-1'
-            scene.appendChild(this.element)
+            if (left !== undefined && top !== undefined) {
+                this.style().left = `${left}px`
+                this.style().top = `${top}px`
+            }
+        }
+        protected initEvents() {
+            this.element.onclick = (event) => this.onClick(event)
+            this.element.ondblclick = (event) => this.onDoubleClick(event)
         }
         style() {
             return this.element.style
@@ -131,9 +143,8 @@ module cardkit {
             this.initStyle(left, top)
             Deck.pool.push(this)
         }
-        private initStyle(left: number, top: number) {
-            this.style().left = `${left}px`
-            this.style().top = `${top}px`
+        protected initStyle(left: number, top: number) {
+            super.initStyle(left, top)
             this.style().background = 'rgba(0, 0, 0, 0.2)'
             this.style().zIndex = `0`
         }
@@ -209,7 +220,7 @@ module cardkit {
             // 初始化事件
             this.initEvents()
         }
-        private initEvents() {
+        protected initEvents() {
             let handler = MovingEventHandler.instance()
             this.element.onmousedown = (event) => {
                 handler.moveBegin(event, this)
@@ -254,7 +265,7 @@ module cardkit {
             this.move(left, top)
             let nextCards = this.next()
             for (let card of nextCards) {
-                let deltaX = left - startX,  deltaY = top - startY
+                let deltaX = left - startX, deltaY = top - startY
                 let newX = card.left() + deltaX
                 let newY = card.top() + deltaY
                 card.move(newX, newY)
