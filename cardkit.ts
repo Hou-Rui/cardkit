@@ -29,7 +29,7 @@ module cardkit {
     }
 
     class Wrapper {
-        public element = document.createElement('div')
+        protected element = document.createElement('div')
 
         constructor(public scene: HTMLElement) {
             this.initStyle()
@@ -38,45 +38,45 @@ module cardkit {
             scene.appendChild(this.element)
         }
         protected initStyle(left?: number, top?: number) {
-            this.style().position = 'absolute'
-            this.style().width = '71px'
-            this.style().height = '96px'
-            this.style().borderRadius = '4px'
+            this.style.position = 'absolute'
+            this.style.width = '71px'
+            this.style.height = '96px'
+            this.style.borderRadius = '4px'
             if (left !== undefined && top !== undefined) {
-                this.style().left = `${left}px`
-                this.style().top = `${top}px`
+                this.style.left = `${left}px`
+                this.style.top = `${top}px`
             }
         }
         protected initEvents() {
             this.element.onclick = event => this.onClick(event)
             this.element.ondblclick = event => this.onDoubleClick(event)
         }
-        style() {
+        get style() {
             return this.element.style
         }
-        left() {
-            return Number(this.style().left!.split('px')[0])
+        get left() {
+            return Number(this.style.left!.split('px')[0])
         }
-        top() {
-            return Number(this.style().top!.split('px')[0])
+        get top() {
+            return Number(this.style.top!.split('px')[0])
         }
-        width() {
-            return Number(this.style().width!.split('px')[0])
+        get width() {
+            return Number(this.style.width!.split('px')[0])
         }
-        height() {
-            return Number(this.style().height!.split('px')[0])
+        get height() {
+            return Number(this.style.height!.split('px')[0])
         }
         containsPoint(left: number, top: number) {
             return (
-                left > this.left() &&
-                left < this.left() + this.width() &&
-                top > this.top() &&
-                top < this.top() + this.height()
+                left > this.left &&
+                left < this.left + this.width &&
+                top > this.top &&
+                top < this.top + this.height
             )
         }
         move(left: number, top: number) {
-            this.style().left = `${left}px`
-            this.style().top = `${top}px`
+            this.style.left = `${left}px`
+            this.style.top = `${top}px`
         }
         onClick(event: MouseEvent): void {
             // 重载此方法
@@ -113,13 +113,13 @@ module cardkit {
         }
         moveBegin(event: MouseEvent, card: Card) {
             this.movingCard = card
-            this.deltaX = event.clientX - card.left()
-            this.deltaY = event.clientY - card.top()
-            card.style().zIndex = `${MovingEventHandler.TopZIndex}`
+            this.deltaX = event.clientX - card.left
+            this.deltaY = event.clientY - card.top
+            card.style.zIndex = `${MovingEventHandler.TopZIndex}`
             let nextCards = card.next()
             for (let index = 0; index < nextCards.length; index++) {
                 let newZIndex = MovingEventHandler.TopZIndex + index + 1
-                nextCards[index].style().zIndex = `${newZIndex}`
+                nextCards[index].style.zIndex = `${newZIndex}`
             }
         }
         moveEnd(event: MouseEvent) {
@@ -143,10 +143,10 @@ module cardkit {
     }
 
     export class Deck extends Wrapper {
-        public cards = new Array<Card>()
-        public faceDownDelta = 2
-        public faceUpDelta = 15
-        public static pool = new Array<Deck>()
+        cards = new Array<Card>()
+        faceDownDelta = 2
+        faceUpDelta = 15
+        static pool = new Array<Deck>()
         constructor(scene: HTMLElement, left: number = 0, top: number = 0) {
             super(scene)
             this.initStyle(left, top)
@@ -154,16 +154,16 @@ module cardkit {
         }
         protected initStyle(left: number, top: number) {
             super.initStyle(left, top)
-            this.style().background = 'rgba(0, 0, 0, 0.2)'
-            this.style().zIndex = `0`
+            this.style.background = 'rgba(0, 0, 0, 0.2)'
+            this.style.zIndex = `0`
         }
-        public adjustCardPosition() {
-            let left = Number(this.style().left!.split('px')[0])
-            let top = Number(this.style().top!.split('px')[0])
+        adjustCardPosition() {
+            let left = Number(this.style.left!.split('px')[0])
+            let top = Number(this.style.top!.split('px')[0])
             for (let index = 0; index < this.cards.length; index++) {
                 let card = this.cards[index]
                 card.rank = index
-                card.style().zIndex = `${index + 1}`
+                card.style.zIndex = `${index + 1}`
                 card.move(left, top)
                 top += card.faceUp() ? this.faceUpDelta : this.faceDownDelta
             }
@@ -190,7 +190,7 @@ module cardkit {
             card.deck = this
             this.adjustCardPosition()
         }
-        topCard() {
+        topCard(): Card | null {
             if (this.cards.length === 0) {
                 return null
             }
@@ -216,8 +216,8 @@ module cardkit {
     }
 
     export class Card extends Wrapper {
-        public rank = -1
-        public name: string
+        rank = -1
+        name: string
         private _faceUp = true
         constructor(public deck: Deck, public suit: Suit, public point: number) {
             super(deck.scene)
@@ -262,21 +262,21 @@ module cardkit {
         setFaceUp(up: boolean) {
             this._faceUp = up
             if (up) {
-                this.style().backgroundImage = `url("images/${this.name}.bmp")`
+                this.style.backgroundImage = `url("images/${this.name}.bmp")`
             } else {
-                this.style().backgroundImage = `url("images/back.bmp")`
+                this.style.backgroundImage = `url("images/back.bmp")`
             }
         }
         moveWithNext(left: number, top: number) {
-            let startX = this.left(),
-                startY = this.top()
+            let startX = this.left,
+                startY = this.top
             this.move(left, top)
             let nextCards = this.next()
             for (let card of nextCards) {
                 let deltaX = left - startX,
                     deltaY = top - startY
-                let newX = card.left() + deltaX
-                let newY = card.top() + deltaY
+                let newX = card.left + deltaX
+                let newY = card.top + deltaY
                 card.move(newX, newY)
             }
         }
