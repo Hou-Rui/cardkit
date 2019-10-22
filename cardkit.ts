@@ -42,6 +42,7 @@ module cardkit {
             this.style.width = '71px'
             this.style.height = '96px'
             this.style.borderRadius = '4px'
+            this.style.backgroundSize = '71px 96px'
             if (left !== undefined && top !== undefined) {
                 this.style.left = `${left}px`
                 this.style.top = `${top}px`
@@ -144,7 +145,7 @@ module cardkit {
 
     export class Deck extends Wrapper {
         cards = new Array<Card>()
-        faceDownDelta = 2
+        faceDownDelta = 5
         faceUpDelta = 15
         static pool = new Array<Deck>()
         constructor(scene: HTMLElement, left: number = 0, top: number = 0) {
@@ -262,9 +263,9 @@ module cardkit {
         set faceUp(up: boolean) {
             this._faceUp = up
             if (up) {
-                this.style.backgroundImage = `url("images/${this.name}.bmp")`
+                this.style.backgroundImage = `url("images/${this.name}.png")`
             } else {
-                this.style.backgroundImage = `url("images/back.bmp")`
+                this.style.backgroundImage = `url("images/blue_back.png")`
             }
         }
         moveWithNext(left: number, top: number) {

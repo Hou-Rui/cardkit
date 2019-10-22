@@ -23,6 +23,8 @@ class GameCard extends cardkit.Card {
         for (let deck of this.targets) {
             if (deck.acceptCard(this)) {
                 deck.addCard(this)
+                game.checkGameOver()
+                break
             }
         }
     }
