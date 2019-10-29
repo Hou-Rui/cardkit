@@ -344,169 +344,177 @@ var cardkit;
     cardkit.Card = Card;
 })(cardkit || (cardkit = {}));
 ///<reference path="cardkit.ts" />
-var game;
-var GameCard = /** @class */ (function (_super) {
-    __extends(GameCard, _super);
-    function GameCard(deck, suit, point, targets) {
-        var _this = _super.call(this, deck, suit, point) || this;
-        _this.targets = targets;
-        return _this;
-    }
-    GameCard.prototype.onClick = function (_event) {
-        if (!this.faceUp) {
-            this.faceUp = true;
+var solitaire;
+///<reference path="cardkit.ts" />
+(function (solitaire) {
+    var GameCard = /** @class */ (function (_super) {
+        __extends(GameCard, _super);
+        function GameCard(game, deck, suit, point, targets) {
+            var _this = _super.call(this, deck, suit, point) || this;
+            _this.game = game;
+            _this.targets = targets;
+            return _this;
         }
-    };
-    GameCard.prototype.movable = function () {
-        return this.faceUp;
-    };
-    GameCard.prototype.onDoubleClick = function (_event) {
-        for (var _i = 0, _a = this.targets; _i < _a.length; _i++) {
-            var deck = _a[_i];
-            if (deck.acceptCard(this)) {
-                deck.addCard(this);
-                game.checkGameCompleted();
-                break;
+        GameCard.prototype.onClick = function (_event) {
+            if (!this.faceUp) {
+                this.faceUp = true;
             }
-        }
-    };
-    GameCard.prototype.onMoveEnd = function (_event) {
-        game.checkGameCompleted();
-    };
-    return GameCard;
-}(cardkit.Card));
-var ServingDeck = /** @class */ (function (_super) {
-    __extends(ServingDeck, _super);
-    function ServingDeck(scene, left, top, placingDeck) {
-        var _this = _super.call(this, scene, left, top) || this;
-        _this.placingDeck = placingDeck;
-        _this.replayCount = 0;
-        _this.faceUpDelta = _this.faceDownDelta = 0;
-        placingDeck.move(left + 120, top);
-        return _this;
-    }
-    ServingDeck.prototype.acceptCard = function (_card) {
-        return false;
-    };
-    ServingDeck.prototype.onClick = function (_event) {
-        this.replayCount++;
-        for (var _i = 0, _a = this.placingDeck.cards; _i < _a.length; _i++) {
-            var card = _a[_i];
-            card.faceUp = false;
-            this.addCard(card);
-        }
-    };
-    ServingDeck.prototype.onCardClick = function (card, _event) {
-        this.placingDeck.addCard(card);
-    };
-    return ServingDeck;
-}(cardkit.Deck));
-var NormalDeck = /** @class */ (function (_super) {
-    __extends(NormalDeck, _super);
-    function NormalDeck() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    NormalDeck.prototype.acceptCard = function (card) {
-        var topCard = this.topCard;
-        if (topCard === null) {
-            return card.point === 13;
-        }
-        return (card.point === topCard.point - 1 &&
-            cardkit.suitConflict(card.suit, topCard.suit));
-    };
-    return NormalDeck;
-}(cardkit.Deck));
-var TargetDeck = /** @class */ (function (_super) {
-    __extends(TargetDeck, _super);
-    function TargetDeck(scene, suit) {
-        var _this = _super.call(this, scene) || this;
-        _this.suit = suit;
-        _this.replayCount = 0;
-        _this.faceUpDelta = _this.faceDownDelta = 0;
-        return _this;
-    }
-    TargetDeck.prototype.acceptCard = function (card) {
-        var topCard = this.topCard;
-        if (topCard === null) {
-            return card.point === 1 && card.suit === this.suit;
-        }
-        return card.point === topCard.point + 1 && card.suit === topCard.suit;
-    };
-    return TargetDeck;
-}(cardkit.Deck));
-var PlacingDeck = /** @class */ (function (_super) {
-    __extends(PlacingDeck, _super);
-    function PlacingDeck(scene, left, top) {
-        if (left === void 0) { left = 0; }
-        if (top === void 0) { top = 0; }
-        var _this = _super.call(this, scene, left, top) || this;
-        _this.faceUpDelta = _this.faceDownDelta = 0;
-        return _this;
-    }
-    PlacingDeck.prototype.acceptCard = function (_card) {
-        return false;
-    };
-    return PlacingDeck;
-}(cardkit.Deck));
-var Solitaire = /** @class */ (function () {
-    function Solitaire(scene) {
-        this.scene = scene;
-        this.placingDeck = new PlacingDeck(this.scene);
-        this.servingDeck = new ServingDeck(this.scene, 50, 50, this.placingDeck);
-        this.normalDecks = new Array();
-        this.targetDecks = new Array();
-        this.initSceneStyle();
-        this.initServingDeck();
-        this.initNormalDecks();
-        this.initTargetDecks();
-    }
-    Solitaire.prototype.initSceneStyle = function () {
-        this.scene.style.background = 'rgb(0, 128, 0)';
-        this.scene.style.height = Solitaire.Height + "px";
-        this.scene.style.width = Solitaire.Width + "px";
-    };
-    Solitaire.prototype.initServingDeck = function () {
-        for (var _i = 0, _a = cardkit.SuitFromNumber; _i < _a.length; _i++) {
-            var suit = _a[_i];
-            for (var point = 1; point <= 13; point++) {
-                new GameCard(this.servingDeck, suit, point, this.targetDecks);
+        };
+        GameCard.prototype.movable = function () {
+            return this.faceUp;
+        };
+        GameCard.prototype.onDoubleClick = function (_event) {
+            for (var _i = 0, _a = this.targets; _i < _a.length; _i++) {
+                var deck = _a[_i];
+                if (deck.acceptCard(this)) {
+                    deck.addCard(this);
+                    this.game.checkGameCompleted();
+                    break;
+                }
             }
+        };
+        GameCard.prototype.onMoveEnd = function (_event) {
+            this.game.checkGameCompleted();
+        };
+        return GameCard;
+    }(cardkit.Card));
+    var ServingDeck = /** @class */ (function (_super) {
+        __extends(ServingDeck, _super);
+        function ServingDeck(scene, left, top, placingDeck) {
+            var _this = _super.call(this, scene, left, top) || this;
+            _this.placingDeck = placingDeck;
+            _this.replayCount = 0;
+            _this.faceUpDelta = _this.faceDownDelta = 0;
+            placingDeck.move(left + 120, top);
+            return _this;
         }
-        this.servingDeck.shuffle();
-    };
-    Solitaire.prototype.initNormalDecks = function () {
-        var singleSpace = Solitaire.Width / 7;
-        for (var index = 0; index < 7; index++) {
-            this.normalDecks[index] = new NormalDeck(this.scene);
-            var deck = this.normalDecks[index];
-            var mid = singleSpace * (index + 0.5);
-            var left = Math.floor(mid - deck.width / 2);
-            deck.move(left, 250);
-            for (var cnt = 0; cnt < index + 1; cnt++) {
-                deck.addCard(this.servingDeck.topCard);
+        ServingDeck.prototype.acceptCard = function (_card) {
+            return false;
+        };
+        ServingDeck.prototype.onClick = function (_event) {
+            this.replayCount++;
+            for (var _i = 0, _a = this.placingDeck.cards; _i < _a.length; _i++) {
+                var card = _a[_i];
+                card.faceUp = false;
+                this.addCard(card);
             }
-            deck.topCard.faceUp = true;
+        };
+        ServingDeck.prototype.onCardClick = function (card, _event) {
+            this.placingDeck.addCard(card);
+        };
+        return ServingDeck;
+    }(cardkit.Deck));
+    var NormalDeck = /** @class */ (function (_super) {
+        __extends(NormalDeck, _super);
+        function NormalDeck() {
+            return _super !== null && _super.apply(this, arguments) || this;
         }
-    };
-    Solitaire.prototype.initTargetDecks = function () {
-        var singleSpace = (Solitaire.Width - 400) / 4;
-        for (var index = 0; index < 4; index++) {
-            var suit = cardkit.SuitFromNumber[index];
-            this.targetDecks[index] = new TargetDeck(this.scene, suit);
-            var deck = this.targetDecks[index];
-            var mid = singleSpace * (index + 0.5);
-            var left = Math.floor(Solitaire.Width - mid - deck.width / 2);
-            deck.move(left, 50);
+        NormalDeck.prototype.acceptCard = function (card) {
+            var topCard = this.topCard;
+            if (topCard === null) {
+                return card.point === 13;
+            }
+            return (card.point === topCard.point - 1 &&
+                cardkit.suitConflict(card.suit, topCard.suit));
+        };
+        return NormalDeck;
+    }(cardkit.Deck));
+    var TargetDeck = /** @class */ (function (_super) {
+        __extends(TargetDeck, _super);
+        function TargetDeck(scene, suit) {
+            var _this = _super.call(this, scene) || this;
+            _this.suit = suit;
+            _this.replayCount = 0;
+            _this.faceUpDelta = _this.faceDownDelta = 0;
+            return _this;
         }
-    };
-    Solitaire.prototype.checkGameCompleted = function () {
-        if (this.targetDecks.every(function (deck) { return deck.cards.length === 13; })) {
-            alert('游戏完成！');
+        TargetDeck.prototype.acceptCard = function (card) {
+            var topCard = this.topCard;
+            if (topCard === null) {
+                return card.point === 1 && card.suit === this.suit;
+            }
+            return card.point === topCard.point + 1 && card.suit === topCard.suit;
+        };
+        return TargetDeck;
+    }(cardkit.Deck));
+    var PlacingDeck = /** @class */ (function (_super) {
+        __extends(PlacingDeck, _super);
+        function PlacingDeck(scene, left, top) {
+            if (left === void 0) { left = 0; }
+            if (top === void 0) { top = 0; }
+            var _this = _super.call(this, scene, left, top) || this;
+            _this.faceUpDelta = _this.faceDownDelta = 0;
+            return _this;
         }
-    };
-    Solitaire.Height = 800;
-    Solitaire.Width = 1000;
-    return Solitaire;
-}());
-var scene = document.getElementById('game-scene');
-game = new Solitaire(scene);
+        PlacingDeck.prototype.acceptCard = function (_card) {
+            return false;
+        };
+        return PlacingDeck;
+    }(cardkit.Deck));
+    var Game = /** @class */ (function () {
+        function Game(scene) {
+            this.scene = scene;
+            this.placingDeck = new PlacingDeck(this.scene);
+            this.servingDeck = new ServingDeck(this.scene, 50, 50, this.placingDeck);
+            this.normalDecks = new Array();
+            this.targetDecks = new Array();
+            this.initSceneStyle();
+            this.initServingDeck();
+            this.initNormalDecks();
+            this.initTargetDecks();
+        }
+        Game.prototype.initSceneStyle = function () {
+            this.scene.style.background = 'rgb(0, 128, 0)';
+            this.scene.style.height = Game.Height + "px";
+            this.scene.style.width = Game.Width + "px";
+        };
+        Game.prototype.initServingDeck = function () {
+            for (var _i = 0, _a = cardkit.SuitFromNumber; _i < _a.length; _i++) {
+                var suit = _a[_i];
+                for (var point = 1; point <= 13; point++) {
+                    new GameCard(this, this.servingDeck, suit, point, this.targetDecks);
+                }
+            }
+            this.servingDeck.shuffle();
+        };
+        Game.prototype.initNormalDecks = function () {
+            var singleSpace = Game.Width / 7;
+            for (var index = 0; index < 7; index++) {
+                this.normalDecks[index] = new NormalDeck(this.scene);
+                var deck = this.normalDecks[index];
+                var mid = singleSpace * (index + 0.5);
+                var left = Math.floor(mid - deck.width / 2);
+                deck.move(left, 250);
+                for (var cnt = 0; cnt < index + 1; cnt++) {
+                    deck.addCard(this.servingDeck.topCard);
+                }
+                deck.topCard.faceUp = true;
+            }
+        };
+        Game.prototype.initTargetDecks = function () {
+            var singleSpace = (Game.Width - 400) / 4;
+            for (var index = 0; index < 4; index++) {
+                var suit = cardkit.SuitFromNumber[index];
+                this.targetDecks[index] = new TargetDeck(this.scene, suit);
+                var deck = this.targetDecks[index];
+                var mid = singleSpace * (index + 0.5);
+                var left = Math.floor(Game.Width - mid - deck.width / 2);
+                deck.move(left, 50);
+            }
+        };
+        Game.prototype.checkGameCompleted = function () {
+            if (this.targetDecks.every(function (deck) { return deck.cards.length === 13; })) {
+                alert('游戏完成！');
+            }
+        };
+        Game.Height = 800;
+        Game.Width = 1000;
+        return Game;
+    }());
+    solitaire.Game = Game;
+    function newGame() {
+        var scene = document.getElementById('game-scene');
+        new Game(scene);
+    }
+    solitaire.newGame = newGame;
+})(solitaire || (solitaire = {}));
