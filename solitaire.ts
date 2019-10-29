@@ -23,13 +23,13 @@ class GameCard extends cardkit.Card {
         for (let deck of this.targets) {
             if (deck.acceptCard(this)) {
                 deck.addCard(this)
-                game.checkGameOver()
+                game.checkGameCompleted()
                 break
             }
         }
     }
     onMoveEnd(_event: MouseEvent) {
-        game.checkGameOver()
+        game.checkGameCompleted()
     }
 }
 
@@ -43,7 +43,7 @@ class ServingDeck extends cardkit.Deck {
     ) {
         super(scene, left, top)
         this.faceUpDelta = this.faceDownDelta = 0
-        placingDeck.move(left + 100, top)
+        placingDeck.move(left + 120, top)
     }
     acceptCard(_card: cardkit.Card) {
         return false
@@ -62,7 +62,7 @@ class ServingDeck extends cardkit.Deck {
 
 class NormalDeck extends cardkit.Deck {
     acceptCard(card: cardkit.Card) {
-        let topCard = this.topCard
+        const topCard = this.topCard
         if (topCard === null) {
             return card.point === 13
         }
@@ -80,7 +80,7 @@ class TargetDeck extends cardkit.Deck {
         this.faceUpDelta = this.faceDownDelta = 0
     }
     acceptCard(card: cardkit.Card) {
-        let topCard = this.topCard
+        const topCard = this.topCard
         if (topCard === null) {
             return card.point === 1 && card.suit === this.suit
         }
@@ -103,7 +103,7 @@ class Solitaire {
     private servingDeck = new ServingDeck(this.scene, 50, 50, this.placingDeck)
     private normalDecks = new Array<NormalDeck>()
     private targetDecks = new Array<TargetDeck>()
-    static Height = 700
+    static Height = 800
     static Width = 1000
     constructor(private scene: HTMLElement) {
         this.initSceneStyle()
@@ -128,10 +128,10 @@ class Solitaire {
         const singleSpace = Solitaire.Width / 7
         for (let index = 0; index < 7; index++) {
             this.normalDecks[index] = new NormalDeck(this.scene)
-            let deck = this.normalDecks[index]
+            const deck = this.normalDecks[index]
             const mid = singleSpace * (index + 0.5)
             const left = Math.floor(mid - deck.width / 2)
-            deck.move(left, 200)
+            deck.move(left, 250)
             for (let cnt = 0; cnt < index + 1; cnt++) {
                 deck.addCard(this.servingDeck.topCard!)
             }
@@ -141,20 +141,20 @@ class Solitaire {
     private initTargetDecks() {
         const singleSpace = (Solitaire.Width - 400) / 4
         for (let index = 0; index < 4; index++) {
-            let suit = cardkit.SuitFromNumber[index]
+            const suit = cardkit.SuitFromNumber[index]
             this.targetDecks[index] = new TargetDeck(this.scene, suit)
-            let deck = this.targetDecks[index]
+            const deck = this.targetDecks[index]
             const mid = singleSpace * (index + 0.5)
             const left = Math.floor(Solitaire.Width - mid - deck.width / 2)
             deck.move(left, 50)
         }
     }
-    checkGameOver() {
+    checkGameCompleted() {
         if (this.targetDecks.every(deck => deck.cards.length === 13)) {
             alert('游戏完成！')
         }
     }
 }
 
-let scene = document.getElementById('game-scene')
+const scene = document.getElementById('game-scene')
 game = new Solitaire(scene!)

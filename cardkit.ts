@@ -39,10 +39,10 @@ module cardkit {
         }
         protected initStyle(left?: number, top?: number) {
             this.style.position = 'absolute'
-            this.style.width = '71px'
-            this.style.height = '96px'
+            this.style.width = '107px'
+            this.style.height = '145px'
             this.style.borderRadius = '4px'
-            this.style.backgroundSize = '71px 96px'
+            this.style.backgroundSize = '107px 145px'
             if (left !== undefined && top !== undefined) {
                 this.style.left = `${left}px`
                 this.style.top = `${top}px`
@@ -100,8 +100,8 @@ module cardkit {
         private constructor() {
             document.onmousemove = event => {
                 if (this.movingCard !== null && this.movingCard.movable()) {
-                    let x = event.clientX - this.deltaX
-                    let y = event.clientY - this.deltaY
+                    const x = event.clientX - this.deltaX
+                    const y = event.clientY - this.deltaY
                     this.movingCard.moveWithNext(x, y)
                 }
             }
@@ -117,7 +117,7 @@ module cardkit {
             this.deltaX = event.clientX - card.left
             this.deltaY = event.clientY - card.top
             card.style.zIndex = `${MovingEventHandler.TopZIndex}`
-            let nextCards = card.next
+            const nextCards = card.next
             for (let index = 0; index < nextCards.length; index++) {
                 let newZIndex = MovingEventHandler.TopZIndex + index + 1
                 nextCards[index].style.zIndex = `${newZIndex}`
@@ -134,7 +134,7 @@ module cardkit {
                 this.movingCard = null
                 return
             }
-            let nextCards = this.movingCard!.next
+            const nextCards = this.movingCard!.next
             deck.addCard(this.movingCard!)
             for (let card of nextCards) {
                 deck.addCard(card)
@@ -145,8 +145,8 @@ module cardkit {
 
     export class Deck extends Wrapper {
         cards = new Array<Card>()
-        faceDownDelta = 5
-        faceUpDelta = 15
+        faceDownDelta = 8
+        faceUpDelta = 18
         static pool = new Array<Deck>()
         constructor(scene: HTMLElement, left: number = 0, top: number = 0) {
             super(scene)
@@ -159,10 +159,10 @@ module cardkit {
             this.style.zIndex = `0`
         }
         adjustCardPosition() {
-            let left = Number(this.style.left!.split('px')[0])
+            const left = Number(this.style.left!.split('px')[0])
             let top = Number(this.style.top!.split('px')[0])
             for (let index = 0; index < this.cards.length; index++) {
-                let card = this.cards[index]
+                const card = this.cards[index]
                 card.rank = index
                 card.style.zIndex = `${index + 1}`
                 card.move(left, top)
@@ -174,7 +174,7 @@ module cardkit {
                 if (deck === movingCard.deck) {
                     continue
                 }
-                let card = deck.topCard
+                const card = deck.topCard
                 if (card === null) {
                     if (deck.containsPoint(left, top)) {
                         return deck
@@ -249,12 +249,12 @@ module cardkit {
             }
         }
         static fromName(deck: Deck, name: string) {
-            let suit = SuitFromString[name[0]]
-            let point = Number(name.slice(1))
+            const suit = SuitFromString[name[0]]
+            const point = Number(name.slice(1))
             return new this(deck, suit, point)
         }
         get next(): Card[] {
-            let cards = this.deck.cards
+            const cards = this.deck.cards
             return cards.slice(this.rank + 1)
         }
         get faceUp(): boolean {
@@ -269,15 +269,15 @@ module cardkit {
             }
         }
         moveWithNext(left: number, top: number) {
-            let startX = this.left,
+            const startX = this.left,
                 startY = this.top
             this.move(left, top)
-            let nextCards = this.next
+            const nextCards = this.next
             for (let card of nextCards) {
-                let deltaX = left - startX,
+                const deltaX = left - startX,
                     deltaY = top - startY
-                let newX = card.left + deltaX
-                let newY = card.top + deltaY
+                const newX = card.left + deltaX
+                const newY = card.top + deltaY
                 card.move(newX, newY)
             }
         }
